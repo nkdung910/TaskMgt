@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && npm run docs:build && next build",
+    "build": "prisma generate && npm run docs:build && NODE_OPTIONS=--disable-warning=DEP0169 next build",
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
     "postinstall": "prisma generate",
     "supabase:test": "next dev --turbopack",
-    "vercel-build": "prisma generate && npm run docs:build && next build",
+    "vercel-build": "prisma generate && npm run docs:build && NODE_OPTIONS=--disable-warning=DEP0169 next build",
     "docs:build": "node scripts/build-docs.js",
     "docs:dev": "npm run docs:build && npm run dev"
   },

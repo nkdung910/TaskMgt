@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useTheme } from "@/contexts/ThemeContext"
 import NewsArticleCard from "./NewsArticleCard"
 import NewsFilter from "./NewsFilter"
@@ -224,14 +224,6 @@ export default function NewsPage({ initialView = 'all' }: NewsPageProps) {
     setFilters(prev => ({ ...prev, ...newFilters }))
   }, [])
 
-  // Memoize filters object to prevent unnecessary re-renders
-  const memoizedFilters = useMemo(() => filters, [
-    filters.search,
-    filters.category,
-    filters.source,
-    filters.tags
-  ])
-
   const hasMoreArticles = currentView === 'all' && articles.length < pagination.total
 
   return (
@@ -293,7 +285,7 @@ export default function NewsPage({ initialView = 'all' }: NewsPageProps) {
               <div className="mb-8">
                 <NewsFilter 
                   onFilterChange={handleFilterChange} 
-                  currentFilters={memoizedFilters}
+                  currentFilters={filters}
                 />
               </div>
             )}

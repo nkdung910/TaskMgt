@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useTheme } from "@/contexts/ThemeContext"
 
 interface NewsFilterProps {
@@ -31,23 +31,15 @@ export default function NewsFilter({ onFilterChange, currentFilters }: NewsFilte
   const [showAdvanced, setShowAdvanced] = useState(false)
   const isInitialMount = useRef(true)
 
-  // Memoize current filters to prevent unnecessary re-renders
-  const memoizedFilters = useMemo(() => currentFilters, [
-    currentFilters?.search,
-    currentFilters?.category,
-    currentFilters?.source,
-    currentFilters?.tags
-  ])
-
   // Sync internal state with current filters prop
   useEffect(() => {
-    if (memoizedFilters) {
-      setSearch(memoizedFilters.search || "")
-      setSelectedCategory(memoizedFilters.category || "")
-      setSelectedSource(memoizedFilters.source || "")
-      setSelectedTags(memoizedFilters.tags || [])
+    if (currentFilters) {
+      setSearch(currentFilters.search || "")
+      setSelectedCategory(currentFilters.category || "")
+      setSelectedSource(currentFilters.source || "")
+      setSelectedTags(currentFilters.tags || [])
     }
-  }, [memoizedFilters])
+  }, [currentFilters])
 
   // Fetch filter options
   useEffect(() => {
