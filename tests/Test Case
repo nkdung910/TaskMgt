@@ -1,0 +1,32 @@
+1/ Test Case Login
+Step 1: Go to https://taskmgt-virid.vercel.app/
+Step 2: Enter Email address : test@test.test ; Password: password123
+Step 3: Click Sign in
+Expected:
+- User login successfully.
+- The popup displays the text 'Login successfully' in green and is positioned at the top right corner of the screen.
+2/ Test Case Create New Task
+Precondition: Login successfully
+Step 1: Click on button Create. Expected: Popup Create New Task is visible.
+Step 2: Verify that the button Create Task is hidden when no information is entered.
+Step 3: Field Title: Enter "Clarify ticket". Expected: Button Create Task is enabled when Title is entered.
+Step 4: Field Description: Enter "Clarify client request"
+Step 5: Due Date: select a date that is one day after the current date.
+Step 6: Priority: Select Urgent.
+Step 7: Type: Select Design.
+Step 8: Time Frame: Select This Week.
+Step 9: Category: Select Work.
+Step 10: Assignee: Select Me.
+Step 11: Field Tags: Enter "Clarify task".
+Step 12: Click on button Create Task.
+Expected:
+- The popup displays the text 'Task created successfully!' in green and is positioned at the top right corner of the screen.
+- In Kanban board, task is visible in Todo status
+3/ Test Case Filter
+Step 1: In field Search tasks: Enter "Clarify ticket". Expected: Card task is visible in Todo.
+Step 2: Click on Clear filter. Expected: All filters are clear.
+Step 3: Field Status: Select each option and observe result. Expected: The result display task card following the Status.
+Step 4: Click on Clear filter. Expected: All filters are clear.
+Step 8: Field Priority: Select each option and observe result. Expected: The result display task card following the Priority.
+Step 12: Click on Clear filter. Expected: All filters are clear.
+Step 13: Field Type: Select each option and observe result. Expected: The result display task card following the Type.

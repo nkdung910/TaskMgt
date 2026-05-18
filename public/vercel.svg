@@ -1,0 +1,22 @@
+<svg width="283" height="64" viewBox="0 0 283 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Task Management Icon -->
+  <g transform="translate(20, 20)">
+    <!-- Task List Icon -->
+    <rect x="0" y="0" width="24" height="24" rx="4" fill="currentColor" opacity="0.1"/>
+    <rect x="2" y="2" width="20" height="20" rx="2" fill="currentColor" opacity="0.2"/>
+    
+    <!-- Task Items -->
+    <rect x="6" y="6" width="12" height="2" rx="1" fill="currentColor"/>
+    <rect x="6" y="10" width="8" height="2" rx="1" fill="currentColor" opacity="0.7"/>
+    <rect x="6" y="14" width="10" height="2" rx="1" fill="currentColor" opacity="0.5"/>
+    
+    <!-- Checkbox -->
+    <circle cx="18" cy="7" r="2" fill="currentColor" opacity="0.3"/>
+    <path d="M17 7L17.5 7.5L19 6" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- App Name -->
+  <text x="60" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="currentColor">
+    TaskMgt
+  </text>
+</svg>

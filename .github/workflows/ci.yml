@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Test with PostgreSQL
+    runs-on: ubuntu-latest
+    
+    # PostgreSQL service container
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: taskmgt_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup environment variables
+        run: |
+          cat > .env << EOF
+          DATABASE_URL="postgresql://postgres:postgres@localhost:5432/taskmgt_test?schema=public"
+          DIRECT_URL="postgresql://postgres:postgres@localhost:5432/taskmgt_test?schema=public"
+          NEXTAUTH_URL="http://localhost:3000"
+          NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}"
+          OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}"
+          NEWSAPI_KEY="${{ secrets.NEWSAPI_KEY }}"
+          NEWSAPI_BASE_URL="https://newsapi.org/v2"
+          AI_SUMMARIZATION_ENABLED="false"
+          EMAIL_FROM="test@example.com"
+          NODE_ENV="test"
+          EOF
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run database migrations
+        run: npx prisma db push --skip-generate
+
+      - name: Run tests
+        run: npm test
+
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Tests completed" >> $GITHUB_STEP_SUMMARY
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup environment for build
+        run: |
+          cat > .env << EOF
+          DATABASE_URL="postgresql://user:pass@localhost:5432/db?schema=public"
+          DIRECT_URL="postgresql://user:pass@localhost:5432/db?schema=public"
+          NEXTAUTH_URL="http://localhost:3000"
+          NEXTAUTH_SECRET="build-secret-key"
+          OPENAI_API_KEY="sk-test"
+          NEWSAPI_KEY="test-key"
+          NEWSAPI_BASE_URL="https://newsapi.org/v2"
+          NODE_ENV="production"
+          EOF
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build application
+        run: npm run build
+
+      - name: Build Summary
+        if: always()
+        run: |
+          echo "## Build Results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Build completed" >> $GITHUB_STEP_SUMMARY
+

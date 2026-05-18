@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  status      String    @default("todo")
+  priority    String    @default("medium")
+  type        String    @default("development")
+  timeFrame   String    @default("this-week") @map("time_frame")
+  category    String    @default("general")
+  assignee    String?
+  dueDate     DateTime? @map("due_date")
+  tags        String[]  @default([])
+  userId      String    @map("user_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  completedAt DateTime? @map("completed_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id               String         @id @default(cuid())
+  email            String         @unique
+  password         String
+  resetToken       String?        @map("reset_token")
+  resetTokenExpiry DateTime?      @map("reset_token_expiry")
+  rolePreferences  String[]       @default(["developer"]) @map("role_preferences")
+  minRelevance     Int            @default(50) @map("min_relevance")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  tasks            Task[]
+  bookmarks        NewsBookmark[]
+  digests          NewsDigest[]
+  config           UserConfig?
+
+  @@map("app_users")
+}
+
+model NewsArticle {
+  id             String         @id @default(cuid())
+  title          String
+  content        String
+  summary        String?
+  url            String         @unique
+  source         String
+  author         String?
+  publishedAt    DateTime       @map("published_at")
+  relevanceScore Float?         @map("relevance_score")
+  tags           String[]       @default([])
+  category       String?
+  imageUrl       String?        @map("image_url")
+  roleScores     Json?          @default("{}") @map("role_scores")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  bookmarks      NewsBookmark[]
+
+  @@map("news_articles")
+}
+
+model NewsBookmark {
+  id        String      @id @default(cuid())
+  userId    String      @map("user_id")
+  articleId String      @map("article_id")
+  createdAt DateTime    @default(now()) @map("created_at")
+  article   NewsArticle @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+  @@map("news_bookmarks")
+}
+
+model NewsDigest {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  date      DateTime
+  articles  String[]
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("news_digests")
+}
+
+model UserConfig {
+  id         String   @id @default(cuid())
+  userId     String   @unique @map("user_id")
+  statuses   String[] @default(["todo", "in-progress", "review", "testing", "done"])
+  priorities String[] @default(["urgent", "high", "medium", "low"])
+  types      String[] @default(["design", "development", "document", "testing"])
+  timeFrames String[] @default(["today", "this-week", "next-week", "later"]) @map("time_frames")
+  categories String[] @default(["general", "work", "personal", "shopping", "health", "finance"])
+  assignees  String[] @default(["unassigned", "me"])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_configs")
+}
