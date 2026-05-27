@@ -30,14 +30,21 @@ export default function NewsFilter({ onFilterChange, currentFilters }: NewsFilte
   const [loading, setLoading] = useState(true)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const isInitialMount = useRef(true)
+  const areTagsEqual = (a: string[], b: string[]) =>
+    a.length === b.length && a.every((tag, index) => tag === b[index])
 
   // Sync internal state with current filters prop
   useEffect(() => {
     if (currentFilters) {
-      setSearch(currentFilters.search || "")
-      setSelectedCategory(currentFilters.category || "")
-      setSelectedSource(currentFilters.source || "")
-      setSelectedTags(currentFilters.tags || [])
+      const nextSearch = currentFilters.search || ""
+      const nextCategory = currentFilters.category || ""
+      const nextSource = currentFilters.source || ""
+      const nextTags = currentFilters.tags || []
+
+      setSearch((prev) => (prev === nextSearch ? prev : nextSearch))
+      setSelectedCategory((prev) => (prev === nextCategory ? prev : nextCategory))
+      setSelectedSource((prev) => (prev === nextSource ? prev : nextSource))
+      setSelectedTags((prev) => (areTagsEqual(prev, nextTags) ? prev : nextTags))
     }
   }, [currentFilters])
 

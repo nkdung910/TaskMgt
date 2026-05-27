@@ -221,7 +221,29 @@ export default function NewsPage({ initialView = 'all' }: NewsPageProps) {
 
   // Stable callback for filter changes
   const handleFilterChange = useCallback((newFilters: Partial<typeof filters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }))
+    setFilters((prev) => {
+      const next = {
+        search: newFilters.search ?? '',
+        category: newFilters.category ?? '',
+        source: newFilters.source ?? '',
+        tags: newFilters.tags ?? [],
+      }
+
+      const tagsUnchanged =
+        prev.tags.length === next.tags.length &&
+        prev.tags.every((tag, index) => tag === next.tags[index])
+
+      if (
+        prev.search === next.search &&
+        prev.category === next.category &&
+        prev.source === next.source &&
+        tagsUnchanged
+      ) {
+        return prev
+      }
+
+      return next
+    })
   }, [])
 
   const hasMoreArticles = currentView === 'all' && articles.length < pagination.total
